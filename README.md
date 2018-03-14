@@ -14,7 +14,7 @@ GET
 
 ### Request Parameter
 | **参数名** | **传入形式** | **类型** | **必填** | **备注** |
-| -- | -- | -- | -- | -- | -- |
+| -- | -- | -- | -- | -- |
 | vendorType | query string| String | false | 默认standard |
 | keyWord | query string| String | true | string字符 |
 | page | query string | int | false | 当前页数。第一页为0 |
