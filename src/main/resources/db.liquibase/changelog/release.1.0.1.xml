@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
+
+    <changeSet id="update_table_location_20170517_" author="Vance.Zhao">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/location_2017051701.csv"
+                  separator=","
+                  tableName="location">
+            <column name="code" type="STRING"/>
+            <column name="type" type="STRING"/>
+            <column name="country_code" type="STRING"/>
+            <column name="state_code" type="STRING"/>
+            <column name="city_code" type="STRING"/>
+            <column name="district_code" type="STRING"/>
+            <column name="is_enabled" type="boolean"/>
+        </loadData>
+        <sql>update location set is_enabled=True, created_date=now(), created_by="System", last_modified_by="System",
+            last_modified_date=now();
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_location_detail_2017051701_" author="Vance.Zhao">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/location_detail_2017051701.csv"
+                  separator=","
+                  tableName="location_detail">
+            <column name="code" type="STRING"/>
+            <column name="description" type="STRING"/>
+            <column name="country" type="STRING"/>
+            <column name="state" type="STRING"/>
+            <column name="city" type="STRING"/>
+            <column name="district" type="STRING"/>
+            <column name="abbreviation" type="STRING"/>
+        </loadData>
+        <sql>update location_detail set language="zh_cn" where language is null;
+        </sql>
+        <sql>update location_detail set description = replace(description, '|', ',') where description like '%|%';
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_vendor_alias_air_ctrip_air_20170517_1_" author="Vance.Zhao">
+        <sql>delete from vendor_alias</sql>
+
+        <loadData encoding="UTF-8"
+                  file="dbscripts/location_alias_2017051701.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="alias" type="STRING"/>
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+        </loadData>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_air_ctrip_air_20170517_2_" author="Vance.Zhao">
+
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_2017051702.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="alias" type="STRING"/>
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="update_table_location_detail_20170518_1_" author="min.fang">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/location_detail_english_20170518_1.csv"
+                  separator=","
+                  tableName="location_detail">
+            <column name="code" type="STRING"/>
+            <column name="description" type="STRING"/>
+            <column name="country" type="STRING"/>
+            <column name="state" type="STRING"/>
+            <column name="city" type="STRING"/>
+            <column name="district" type="STRING"/>
+            <column name="abbreviation" type="STRING"/>
+        </loadData>
+        <sql>update location_detail set language="en-us" where language is null;
+        </sql>
+        <sql>update location_detail set description = replace(description, '|', ',') where description like '%|%';
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_location_detail_20170518_2_" author="min.fang">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/location_detail_english_20170518_2.csv"
+                  separator=","
+                  tableName="location_detail">
+            <column name="code" type="STRING"/>
+            <column name="description" type="STRING"/>
+            <column name="country" type="STRING"/>
+            <column name="state" type="STRING"/>
+            <column name="city" type="STRING"/>
+            <column name="district" type="STRING"/>
+            <column name="abbreviation" type="STRING"/>
+        </loadData>
+        <sql>update location_detail set language="en-us" where language is null;
+        </sql>
+        <sql>update location_detail set description = replace(description, '|', ',') where description like '%|%';
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_location_detail_20170523_" author="min.fang">
+        <sql>update location_detail set language="en_us" where language="en-us";
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_location_detail_20170615_" author="min.fang">
+        <sql>
+            UPDATE location_detail as a ,location_detail as b set a.district=b.city,a.city=b.state where a.id=b.id and a.state in('上海','北京','天津','重庆') and a.state!=a.city;
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_location_detail_20170616_" author="min.fang">
+        <sql>
+            UPDATE location_detail as a ,location_detail as b set a.district=b.city,a.city=b.state where a.id=b.id and a.state in('香港','澳门') and a.state!=a.city;
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_vendor_alias_air_ctrip_hotel_20170616_" author="min.fang">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_hotel_20170616.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="alias" type="STRING"/>
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+        </loadData>
+    </changeSet>
+
+    <!-- 修复city不显示的数据 -->
+    <changeSet id="update_table_location_detail_20170722" author="min.fang">
+        <sql>
+            UPDATE location_detail l set l.city=l.state where l.city="" and l.state!="";
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_vendor_alias_all_20170727" author="min.fang">
+
+        <sql>
+            update vendor_alias set language = 'zh_cn' where language is null;
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_vendor_alias_all_20170728" author="min.fang">
+
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_all_20170727.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="alias" type="STRING"/>
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+        </loadData>
+        <sql>
+            update vendor_alias set language = "en_us" where language is null;
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_vendor_alias_standard_air_20170807_1" author="min.fang">
+
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_air_20170807_1.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+        </loadData>
+        <sql>
+            update vendor_alias set language = "zh_cn" where language is null;
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_vendor_alias_standard_air_20170807_2" author="min.fang">
+
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_air_20170807_2.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+        </loadData>
+        <sql>
+            update vendor_alias set language = "en_us" where language is null;
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_table_location_20170814" author="min.fang">
+        <sql>
+            UPDATE location set type="CITY/STATE" where code in ("CHN011000000","CHN012000000","CHN031000000","CHN050000000","CHN081000000","CHN082000000");
+        </sql>
+    </changeSet>
+
+    <!-- 美亚 -->
+    <changeSet id="update_table_vendor_alias_20170816_1" author="min.fang">
+        <sql>
+            alter table vendor_alias add column vendor_code varchar(10);
+        </sql>
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_air_20170816_1.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+            <column name="vendor_code" type="STRING"/>
+        </loadData>
+        <sql>
+            update vendor_alias set language = "zh_cn" where language is null;
+        </sql>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20170816_2" author="min.fang">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_air_20170816_2.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+            <column name="vendor_code" type="STRING"/>
+        </loadData>
+        <sql>
+            update vendor_alias set language = "en_us" where language is null;
+        </sql>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20170905" author="min.fang">
+        <sql>
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN035005000','ctrip_air','泉州','zh_cn');
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN035005000','ctrip_air','Quan Zhou ','en_us');
+        </sql>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20170914" author="min.fang">
+        <sql>
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN022006000','ctrip_air','白山','zh_cn');
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN022006000','ctrip_air','Bai Shan ','en_us');
+        </sql>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20170914_2" author="min.fang">
+        <sql>
+            delete from vendor_alias where CODE = 'CHN022025000' and vendor_type= 'ctrip_air';
+        </sql>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20170920_1" author="min.fang">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_meiya_hotel_zh_cn.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+            <column name="language" type="STRING"/>
+        </loadData>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20170920_2" author="min.fang">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_meiya_hotel_en_us.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+            <column name="language" type="STRING"/>
+        </loadData>
+    </changeSet>
+    <changeSet id="updaate_table_location_20171101" author="min.fang">
+        <sql>
+            INSERT INTO location(
+            CODE ,
+            type ,
+            country_code ,
+            state_code ,
+            city_code ,
+            district_code ,
+            is_enabled ,
+            created_date ,
+            created_by ,
+            last_modified_date ,
+            last_modified_by
+            )
+            VALUES
+            ('MEX001001000','CITY','MEX','001','001','000',TRUE,NOW(),'System',NOW(),'System'),
+            ('MEX001000000','STATE','MEX','001','000','000',TRUE,NOW(),'System',NOW(),'System');
+
+            INSERT INTO location_detail(
+            language,
+            CODE,
+            country,
+            state,
+            city,
+            district
+            )
+            VALUES
+            ('zh_cn','MEX001001000','墨西哥','科阿韦拉州','拉莫斯阿里斯佩','拉莫斯阿里斯佩'),
+            ('en_us','MEX001001000','Mexico','Coahuila','Ramos Arizpe','Ramos Arizpe'),
+            ('zh_cn','MEX001000000','墨西哥','科阿韦拉州','科阿韦拉州',''),
+            ('en_us','MEX001000000','Mexico','Coahuila','Coahuila','');
+
+            INSERT INTO vendor_alias(
+            code,
+            vendor_type,
+            alias,
+            language
+            )
+            VALUES
+            ('MEX001001000','standard','拉莫斯阿里斯佩','zh_cn'),
+            ('MEX001001000','standard','Ramos Arizpe','en_us'),
+            ('MEX001000000','standard','科阿韦拉州','zh_cn'),
+            ('MEX001000000','standard','Coahuila','en_us'),
+            ('MEX001000000','ctrip_hotel','科阿韦拉州','zh_cn'),
+            ('MEX001000000','ctrip_hotel','Coahuila','en_us'),
+            ('MEX001001000','ctrip_hotel','拉莫斯阿里斯佩','zh_cn'),
+            ('MEX001001000','ctrip_hotel','Ramos Arizpe','en_us');
+        </sql>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20171102" author="min.fang">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_didi_20171102.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+            <column name="vendor_code" type="STRING"/>
+        </loadData>
+        <sql>
+            update vendor_alias set language = "zh_cn" where language is null and vendor_type='didi';
+        </sql>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20171110" author="min.fang">
+        <sql>
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN015005081','ctrip_air','霍林郭勒','zh_cn');
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN015005081','ctrip_air','huolinguole','en_us');
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN036011000','ctrip_air','上饶','zh_cn');
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN036011000','ctrip_air','Shangrao','en_us');
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN022007000','ctrip_air','松原','zh_cn');
+            insert into vendor_alias (code,vendor_type,alias,language) values('CHN022007000','ctrip_air','Songyuan','en_us');
+        </sql>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20171110_2" author="min.fang">
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_wyn_hotel_en_us.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+            <column name="vendor_code" type="STRING"/>
+            <column name="language" type="STRING"/>
+        </loadData>
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_wyn_hotel_zh_cn.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+            <column name="vendor_code" type="STRING"/>
+            <column name="language" type="STRING"/>
+        </loadData>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20171117" author="min.fang">
+        <sql>
+            alter table vendor_alias add column vendor_country_code varchar(50);
+        </sql>
+
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_citsae_china.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+            <column name="vendor_code" type="STRING"/>
+            <column name="language" type="STRING"/>
+            <column name="vendor_country_code" type="STRING"/>
+        </loadData>
+    </changeSet>
+    <changeSet id="insert_table_vendor_alias_20171112" author="min.fang">
+        <sql>
+            SET FOREIGN_KEY_CHECKS=0;
+        </sql>
+        <loadData encoding="UTF-8"
+                  file="dbscripts/vendor_alias_citsae_foreign.csv"
+                  separator=","
+                  tableName="vendor_alias">
+            <column name="code" type="STRING"/>
+            <column name="vendor_type" type="STRING"/>
+            <column name="alias" type="STRING"/>
+            <column name="language" type="STRING"/>
+        </loadData>
+        <sql>
+            SET FOREIGN_KEY_CHECKS=1;
+        </sql>
+    </changeSet>
+    <changeSet id="update_table_vendor_alias_20171128" author="min.fang">
+        <sql>
+            update vendor_alias set alias='Bari' where code='ITA000BRI000' and `language`='en_us';
+        </sql>
+        <sql>
+            INSERT INTO location(
+            CODE ,
+            type ,
+            country_code ,
+            state_code ,
+            city_code ,
+            district_code ,
+            is_enabled ,
+            created_date ,
+            created_by ,
+            last_modified_date ,
+            last_modified_by
+            )
+            VALUES
+            ('FRA000BOD000','CITY','FRA','000','BOD','000',TRUE,NOW(),'System',NOW(),'System');
+
+            INSERT INTO location_detail(
+            language,
+            CODE,
+            country,
+            state,
+            city,
+            district
+            )
+            VALUES
+            ('zh_cn','FRA000BOD000','法国','','波尔多',''),
+            ('en_us','FRA000BOD000','France','','Bordeaux','');
+
+            INSERT INTO vendor_alias(
+            code,
+            vendor_type,
+            alias,
+            language
+            )
+            VALUES
+            ('FRA000BOD000','standard','波尔多','zh_cn'),
+            ('FRA000BOD000','standard','Bordeaux','en_us'),
+            ('FRA000BOD000','ctrip_hotel','波尔多','zh_cn'),
+            ('FRA000BOD000','ctrip_hotel','Bordeaux','en_us'),
+            ('FRA000BOD000','ctrip_air','波尔多','zh_cn'),
+            ('FRA000BOD000','ctrip_air','Bordeaux','en_us');
+        </sql>
+    </changeSet>
+</databaseChangeLog>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

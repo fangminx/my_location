@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
+
+    <!-- 创建location表 -->
+    <changeSet id="create_table_location" author="min.fang">
+        <createTable tableName="location">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="code" type="varchar(255)"/>
+            <column name="type" type="varchar(30)"/>
+            <column name="country_code" type="varchar(30)"/>
+            <column name="state_code" type="varchar(30)"/>
+            <column name="city_code" type="varchar(30)"/>
+            <column name="district_code" type="varchar(30)"/>
+            <column name="is_enabled" type="boolean"/>
+            <column name="created_date" type="timestamp"/>
+            <column name="created_by" type="varchar(30)"/>
+            <column name="last_modified_date" type="timestamp"/>
+            <column name="last_modified_by" type="varchar(30)"/>
+        </createTable>
+        <createIndex
+                indexName="idx_location_code"
+                tableName="location"
+                tablespace="A String"
+                unique="false">
+            <column name="code" type="varchar(255)"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 创建location_detail表 -->
+    <changeSet id="create_table_location_detail" author="min.fang">
+        <createTable tableName="location_detail">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="language" type="varchar(30)"/>
+            <column name="code" type="varchar(255)"/>
+            <column name="country" type="varchar(30)"/>
+            <column name="state" type="varchar(30)"/>
+            <column name="city" type="varchar(30)"/>
+            <column name="district" type="varchar(30)"/>
+            <column name="description" type="varchar(300)"/>
+            <column name="abbreviation" type="varchar(30)"/>
+        </createTable>
+
+        <createIndex
+                indexName="idx_locationDetail_code"
+                tableName="location_detail"
+                tablespace="A String"
+                unique="false">
+            <column name="code" type="varchar(255)"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 创建vendor_alias表 -->
+    <changeSet id="create_table_vendor_alias" author="min.fang">
+        <createTable tableName="vendor_alias">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="code" type="varchar(255)"/>
+            <column name="vendor_type" type="varchar(255)"/>
+            <column name="alias" type="varchar(255)"/>
+        </createTable>
+        <createIndex
+                indexName="idx_vendorAlias_code"
+                tableName="vendor_alias"
+                tablespace="A String"
+                unique="false">
+            <column name="code" type="varchar(255)"/>
+        </createIndex>
+        <addForeignKeyConstraint baseColumnNames="code"
+                                 baseTableName="vendor_alias"
+                                 constraintName="fk_vendoralias_location"
+                                 referencedColumnNames="code"
+                                 referencedTableName="location"/>
+    </changeSet>
+
+
+    <!-- 修改location_detail字段大小 -->
+    <changeSet id="alert_table_location_detail_20170912" author="min.fang">
+        <renameColumn tableName="location_detail" oldColumnName="country" newColumnName="country"
+                      columnDataType="varchar(255)"/>
+        <renameColumn tableName="location_detail" oldColumnName="state" newColumnName="state"
+                      columnDataType="varchar(255)"/>
+        <renameColumn tableName="location_detail" oldColumnName="city" newColumnName="city"
+                      columnDataType="varchar(255)"/>
+        <renameColumn tableName="location_detail" oldColumnName="district" newColumnName="district"
+                      columnDataType="varchar(255)"/>
+        <renameColumn tableName="location_detail" oldColumnName="abbreviation" newColumnName="abbreviation"
+                      columnDataType="varchar(255)"/>
+    </changeSet>
+
+
+    <!-- 修改vendor_alias索引 -->
+    <changeSet id="update_table_vendor_alias_20170912" author="min.fang">
+        <createIndex
+                indexName="idx_vendor_alias_code_vendor_type"
+                tableName="vendor_alias"
+                tablespace="A String"
+                unique="true">
+            <column name="code" type="varchar(255)"/>
+            <column name="vendor_type" type="varchar(255)"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 修改字符编码，大小写 -->
+    <changeSet id="update_table_location_detail_20170613" author="Vance.Zhao">
+        <sql>
+            set FOREIGN_KEY_CHECKS =0;
+            alter table location_detail COLLATE utf8_general_ci;
+            set FOREIGN_KEY_CHECKS =1;
+        </sql>
+    </changeSet>
+
+    <!-- 给vendor_alias表添加language字段 -->
+    <changeSet id="update_table_vendor_alias_all_20170727" author="min.fang">
+        <dropIndex tableName="vendor_alias" indexName="idx_vendor_alias_code_vendor_type"/>
+        <addColumn tableName="vendor_alias">
+            <column name="language" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+
+
+</databaseChangeLog>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

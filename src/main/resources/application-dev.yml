@@ -1,0 +1,31 @@
+spring:
+  data:
+    solr:
+      host: http://localhost:8983/solr
+      repositories:
+        enabled: true
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/my_location?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLInnoDBDialect
+    database: MYSQL
+    show_sql: true
+    properties:
+        hibernate.cache.use_second_level_cache: false
+        hibernate.cache.use_query_cache: false
+        hibernate.generate_statistics: false
+
+
+liquibase:
+  enabled: true
+  changeLog: classpath:db.liquibase/master.xml
+
+logging:
+  config: classpath:logback/logback-dev.xml
+
+solrcore:
+  location: locationSearch
+
