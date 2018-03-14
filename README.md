@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ## 根据供应商名称和关键字来查找标准地址
 
 ### URL
@@ -48,7 +47,3 @@ GET
 ``` json
 []
 ```    
-=======
-# my_location
-Solr基于Liqibase+MySQL+JAP建索引、分词查询、权重排序
->>>>>>> 738cde560a9ee4dc99fc702eda7bb8598461b774
