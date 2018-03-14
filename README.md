@@ -13,7 +13,6 @@ GET
 
 
 ### Request Parameter
-
 | **参数名** | **传入形式** | **类型** | **必填** | **备注** |
 | -- | -- | -- | -- | -- | -- |
 | vendorType | query string| String | false | 默认standard |
